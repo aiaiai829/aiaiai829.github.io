@@ -37,14 +37,7 @@ const App = {
             searchResults: document.getElementById('searchResults'),
             clearSearch: document.getElementById('clearSearch'),
             refreshBtn: document.getElementById('refreshBtn'),
-            settingsBtn: document.getElementById('settingsBtn'),
-            settingsModal: document.getElementById('settingsModal'),
-            closeSettings: document.getElementById('closeSettings'),
-            githubToken: document.getElementById('githubToken'),
-            githubRepo: document.getElementById('githubRepo'),
-            dataPath: document.getElementById('dataPath'),
-            saveSettings: document.getElementById('saveSettings'),
-            syncNow: document.getElementById('syncNow'),
+            refreshBtn: document.getElementById('refreshBtn'),
             toast: document.getElementById('toast')
         };
     },
@@ -66,13 +59,6 @@ const App = {
 
         // 刷新
         this.elements.refreshBtn.addEventListener('click', () => this.refreshData());
-
-        // 设置弹窗
-        this.elements.settingsBtn.addEventListener('click', () => this.openSettings());
-        this.elements.closeSettings.addEventListener('click', () => this.closeSettings());
-        this.elements.settingsModal.querySelector('.modal__backdrop').addEventListener('click', () => this.closeSettings());
-        this.elements.saveSettings.addEventListener('click', () => this.saveSettings());
-        this.elements.syncNow.addEventListener('click', () => this.syncToGitHub());
     },
 
     /**
@@ -343,37 +329,6 @@ const App = {
     showLoading(show) {
         this.state.isLoading = show;
         this.elements.loading.style.display = show ? 'flex' : 'none';
-    },
-
-    /**
-     * 打开设置弹窗
-     */
-    openSettings() {
-        const config = GitHubAPI.config;
-        this.elements.githubToken.value = config.token || '';
-        this.elements.githubRepo.value = config.repo || '';
-        this.elements.dataPath.value = config.path || 'data/funds.json';
-        this.elements.settingsModal.classList.add('active');
-    },
-
-    /**
-     * 关闭设置弹窗
-     */
-    closeSettings() {
-        this.elements.settingsModal.classList.remove('active');
-    },
-
-    /**
-     * 保存设置
-     */
-    saveSettings() {
-        GitHubAPI.saveConfig({
-            token: this.elements.githubToken.value.trim(),
-            repo: this.elements.githubRepo.value.trim(),
-            path: this.elements.dataPath.value.trim() || 'data/funds.json'
-        });
-        this.showToast('设置已保存', 'success');
-        this.closeSettings();
     },
 
     /**

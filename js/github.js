@@ -4,40 +4,20 @@
  */
 
 const GitHubAPI = {
+    // ⚠️ 请在这里直接填入你的配置
     config: {
-        token: '',
-        repo: '',    // 格式: owner/repo
-        path: 'data/funds.json'
-    },
-
-    /**
-     * 从 localStorage 加载配置
-     */
-    loadConfig() {
-        const saved = localStorage.getItem('github_config');
-        if (saved) {
-            try {
-                Object.assign(this.config, JSON.parse(saved));
-            } catch (e) {
-                console.error('加载GitHub配置失败:', e);
-            }
-        }
-        return this.config;
-    },
-
-    /**
-     * 保存配置到 localStorage
-     */
-    saveConfig(config) {
-        Object.assign(this.config, config);
-        localStorage.setItem('github_config', JSON.stringify(this.config));
+        token: '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',     // 例如: ghp_xxxxxxxxxxxx
+        repo: 'aiaiai829/aiaiai829.github.io',     // 例如: zhangsan/fund-data
+        path: 'data/funds.json'              // 数据文件路径
     },
 
     /**
      * 检查是否已配置
      */
     isConfigured() {
-        return !!(this.config.token && this.config.repo);
+        return this.config.token && this.config.repo &&
+            this.config.token !== 'YOUR_GITHUB_TOKEN_HERE' &&
+            this.config.repo !== 'YOUR_USERNAME/YOUR_REPO';
     },
 
     /**
@@ -149,7 +129,7 @@ const GitHubAPI = {
 };
 
 // 初始化时加载配置
-GitHubAPI.loadConfig();
+// GitHubAPI.loadConfig(); // 已改为硬编码，不再需要加载
 
 // 导出
 window.GitHubAPI = GitHubAPI;
