@@ -4,6 +4,8 @@
     --bg-secondary: #ffffff;
     --bg-card: #ffffff;
     --bg-card-hover: #f0f0f5;
+
+    /* Name gets more space */
     --text-primary: #1a1a1f;
     --text-secondary: #6b6b75;
     --text-muted: #9a9aa5;
@@ -350,7 +352,7 @@ button {
 
 /* Column 1: Name & Code */
 .fund-card__info {
-    flex: 1.5;
+    flex: 2.5;
     min-width: 0;
 }
 
@@ -370,7 +372,7 @@ button {
 
 /* Column 2: Previous Net Value */
 .fund-card__prev {
-    flex: 0.8;
+    flex: 0.7;
     text-align: center;
 }
 
