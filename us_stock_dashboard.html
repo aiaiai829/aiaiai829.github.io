@@ -36,7 +36,6 @@ table{min-width:1180px}th[data-sort]{padding:0}.sort-button{display:flex;align-i
 <section class="panel table-panel"><div class="tools">
 <input id="search" type="search" placeholder="搜索代码 / 名称 / 账号" aria-label="搜索持仓">
 <select id="broker" aria-label="券商"></select><select id="accountName" aria-label="账户"></select><select id="assetType" aria-label="资产类型"></select>
-<select id="status" aria-label="数据状态"><option value="fresh">本轮成功数据</option><option value="all">全部（含旧数据）</option><option value="stale">仅旧数据</option></select>
 <input id="minValue" type="number" min="0" step="1" placeholder="最低市值（原币）" aria-label="最低市值">
 <div class="list-total"><span class="label">Filtered net value</span><strong id="listTotal">—</strong><span class="sub" id="listNote"></span></div></div>
 <div class="table-scroll"><table><thead id="columns"><tr>
@@ -165,9 +164,9 @@ function renderAccounts() {
   }).join('');
 }
 function renderTable() {
-  const q=$('search').value.trim().toLowerCase(), broker=$('broker').value, name=$('accountName').value, kind=$('assetType').value, status=$('status').value;
+  const q=$('search').value.trim().toLowerCase(), broker=$('broker').value, name=$('accountName').value, kind=$('assetType').value;
   const min=Math.max(0,Number($('minValue').value)||0);
-  const matched=assets.filter(a=>a.currency===currency && (!broker||a.broker===broker) && (!name||a.account_name===name) && (!kind||a.asset_type===kind) && (status==='all'||(status==='stale'?a.stale:!a.stale)) && (!q||`${a.symbol} ${a.description||''} ${brokerName(a.broker)} ${a.account_name} ${typeName(a.asset_type)}`.toLowerCase().includes(q)));
+  const matched=assets.filter(a=>!a.stale && a.currency===currency && (!broker||a.broker===broker) && (!name||a.account_name===name) && (!kind||a.asset_type===kind) && (!q||`${a.symbol} ${a.description||''} ${brokerName(a.broker)} ${a.account_name} ${typeName(a.asset_type)}`.toLowerCase().includes(q)));
   const groups=aggregate(matched).filter(g=>g.value==null?min===0:Math.abs(g.value)>=min);
   const positive=groups.reduce((s,g)=>s+Math.max(0,g.value||0),0), global=aggregate(currentFresh()).reduce((s,g)=>s+Math.max(0,g.value||0),0);
   $('listTotal').textContent=money(sum(groups.map(g=>g.value)) ?? (groups.length?null:0));
@@ -182,7 +181,7 @@ function renderTable() {
 $('generated').textContent=time(portfolio.generated_at);
 $('schedule').textContent=`NYSE ${portfolio.trading_day?'交易日 · 每 5 分钟':'非交易日 · 每 2 小时'}采集`;
 $('nextUpdate').textContent=`下次采集 ${time(portfolio.next_update)}`;
-$('warnings').innerHTML=(portfolio.demo?'<div class="banner">演示数据 · 非真实账户资产</div>':'')+(portfolio.accounts.some(a=>a.stale)?'<div class="banner">部分账号采集失败，汇总仅计入本轮成功账号。历史快照可在持仓列表的数据状态中查看。</div>':'');
+$('warnings').innerHTML=(portfolio.demo?'<div class="banner">演示数据 · 非真实账户资产</div>':'')+(portfolio.accounts.some(a=>a.stale)?'<div class="banner">部分账号采集失败，汇总和持仓表仅计入本轮成功账号。失败账号的历史快照可在账户卡片中查看。</div>':'');
 $('currency').innerHTML=(portfolio.currencies.length?portfolio.currencies:['USD']).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('currency').value=currency;
 options('broker',assets.map(a=>a.broker),'券商');options('accountName',portfolio.accounts.map(a=>a.name),'账户');options('assetType',assets.map(a=>a.asset_type),'类型');
 $('currency').addEventListener('change',()=>{currency=$('currency').value;renderSummary();renderTable();});
